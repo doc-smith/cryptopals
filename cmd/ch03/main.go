@@ -38,22 +38,33 @@ var englishLetterFrequencies = map[byte]float64{
 	'z': 0.00074,
 }
 
-func countBytes(b []byte) map[byte]int {
-	counts := map[byte]int{}
-	for _, c := range b {
+func countByteFrequency(bs []byte) map[byte]float64 {
+	counts := make(map[byte]float64)
+	n := 0
+	for _, c := range bs {
 		counts[c]++
+		n++
 	}
+
+	for b := range counts {
+		counts[b] /= float64(n)
+	}
+
 	return counts
 }
 
-func scoreEnglishText(text []byte) float64 {
-	// https://en.wikipedia.org/wiki/Bhattacharyya_distance
-	counts := countBytes(text)
-	score := 0.0
-	for c, f := range englishLetterFrequencies {
-		score += math.Sqrt(f * float64(counts[c]) / float64(len(text)))
+func bhattacharyyaCoefficient(f, g map[byte]float64) float64 {
+	sum := 0.0
+	for b, freq := range f {
+		sum += math.Sqrt(freq * g[b])
 	}
-	return score
+	return sum
+}
+
+func scoreEnglishText(text []byte) float64 {
+	return bhattacharyyaCoefficient(
+		englishLetterFrequencies,
+		countByteFrequency(text))
 }
 
 func crackSingleByteXor(ciphertext []byte) (byte, []byte) {
