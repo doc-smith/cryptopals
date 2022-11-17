@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	InvalidByteValue = math.MaxUint8
-	Alphabet         = "0123456789abcdef"
+	invalidByteValue = math.MaxUint8
+	alphabet         = "0123456789abcdef"
 )
 
 var LengthError = errors.New("hex string must be even in length")
@@ -24,7 +24,7 @@ func (e *InvalidByteError) Error() string {
 func EncodeHexString(b []byte) string {
 	var res []byte
 	for _, v := range b {
-		res = append(res, Alphabet[v>>4], Alphabet[v&0xf])
+		res = append(res, alphabet[v>>4], alphabet[v&0xf])
 	}
 	return string(res)
 }
@@ -38,7 +38,7 @@ func decodeHexNibble(c byte) byte {
 	case c >= 'A' && c <= 'F':
 		return c - 'A' + 10
 	default:
-		return InvalidByteValue
+		return invalidByteValue
 	}
 }
 
@@ -53,7 +53,7 @@ func DecodeHexString(hex string) ([]byte, error) {
 		var nibbles [2]byte
 		for j := 0; j < 2; j++ {
 			n := decodeHexNibble(hex[i+j])
-			if n == InvalidByteValue {
+			if n == invalidByteValue {
 				return nil, &InvalidByteError{
 					Offset: i + j,
 					Msg:    "invalid byte in hex string",
