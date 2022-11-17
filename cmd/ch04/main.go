@@ -10,41 +10,45 @@ import (
 	"os"
 )
 
-func findBestPlaintextCandidate(ciphertext []byte) ([]byte, float64) {
-	var bestPlaintext []byte
-	var bestScore float64
+type maxByKey[V any] struct {
+	MaxKey float64
+	Value  V
+}
 
+func newMaxByKey[V any]() *maxByKey[V] {
+	r := &maxByKey[V]{}
+	r.MaxKey = math.Inf(-1)
+	return r
+}
+
+func (m *maxByKey[V]) Update(key float64, value V) {
+	if key > m.MaxKey {
+		m.MaxKey = key
+		m.Value = value
+	}
+}
+
+func findBestPlaintextCandidate(ciphertext []byte) ([]byte, float64) {
+	bestPlaintext := newMaxByKey[[]byte]()
 	for key := 0; key < math.MaxUint8; key++ {
 		plaintext := xor.DecryptSingleByteXor(ciphertext, byte(key))
-
 		score := lang.ScoreEnglishText(plaintext)
-		if score > bestScore {
-			bestScore = score
-			bestPlaintext = plaintext
-		}
+		bestPlaintext.Update(score, plaintext)
 	}
-
-	return bestPlaintext, bestScore
+	return bestPlaintext.Value, bestPlaintext.MaxKey
 }
 
 func Solve(lines []string) string {
-	var bestCandidate []byte
-	var bestScore float64
-
+	bestPlaintextCandidate := newMaxByKey[[]byte]()
 	for _, line := range lines {
 		ciphertext, err := hex.DecodeHexString(line)
 		if err != nil {
 			panic("input is not a valid hex string")
 		}
-
 		plaintextCandidate, candidateScore := findBestPlaintextCandidate(ciphertext)
-		if candidateScore > bestScore {
-			bestScore = candidateScore
-			bestCandidate = plaintextCandidate
-		}
+		bestPlaintextCandidate.Update(candidateScore, plaintextCandidate)
 	}
-
-	return string(bestCandidate)
+	return string(bestPlaintextCandidate.Value)
 }
 
 func readInput() []string {
