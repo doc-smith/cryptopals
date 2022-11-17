@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func xor(xs []byte, ys []byte) []byte {
+func xor(xs, ys []byte) []byte {
 	var res []byte
 	for i := 0; i < len(xs); i++ {
 		res = append(res, xs[i]^ys[i])
@@ -15,7 +15,7 @@ func xor(xs []byte, ys []byte) []byte {
 	return res
 }
 
-func Solve(x string, y string) string {
+func Solve(x, y string) string {
 	if len(x) != len(y) {
 		panic("inputs must be the same length")
 	}
