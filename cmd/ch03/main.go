@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/doc-smith/cryptopals/util/ciphers/xor"
 	"github.com/doc-smith/cryptopals/util/encoding/hex"
 	"math"
 	"os"
@@ -55,21 +56,13 @@ func scoreEnglishText(text []byte) float64 {
 	return score
 }
 
-func xor(xs []byte, k byte) []byte {
-	res := make([]byte, 0, len(xs))
-	for _, x := range xs {
-		res = append(res, x^k)
-	}
-	return res
-}
-
 func crackSingleByteXor(ciphertext []byte) (byte, []byte) {
 	var bestKey byte
 	var bestPlaintext []byte
 	var bestScore float64
 
 	for key := 0; key < math.MaxUint8; key++ {
-		plaintext := xor(ciphertext, byte(key))
+		plaintext := xor.DecryptSingleByteXor(ciphertext, byte(key))
 		score := scoreEnglishText(plaintext)
 		if score > bestScore {
 			bestScore = score
