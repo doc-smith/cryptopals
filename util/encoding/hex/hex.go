@@ -2,27 +2,24 @@ package hex
 
 import (
 	"errors"
-	"math"
+	"fmt"
 )
 
 const (
-	invalidByteValue = math.MaxUint8
-	alphabet         = "0123456789abcdef"
+	invalidByteValue byte = 0xff
+	alphabet              = "0123456789abcdef"
 )
 
 var LengthError = errors.New("hex string must be even in length")
 
-type InvalidByteError struct {
-	Offset int
-	Msg    string
-}
+type InvalidByteError int
 
-func (e *InvalidByteError) Error() string {
-	return e.Msg
+func (e InvalidByteError) Error() string {
+	return fmt.Sprintf("invalid input byte at offset %d", int(e))
 }
 
 func EncodeHexString(b []byte) string {
-	var res []byte
+	res := make([]byte, 0, len(b)*2)
 	for _, v := range b {
 		res = append(res, alphabet[v>>4], alphabet[v&0xf])
 	}
@@ -43,21 +40,19 @@ func decodeHexNibble(c byte) byte {
 }
 
 func DecodeHexString(hex string) ([]byte, error) {
-	var res []byte
-
 	if len(hex)%2 != 0 {
 		return nil, LengthError
 	}
 
+	res := make([]byte, 0)
+
 	for i := 0; i < len(hex); i += 2 {
 		var nibbles [2]byte
 		for j := 0; j < 2; j++ {
-			n := decodeHexNibble(hex[i+j])
+			offset := i + j
+			n := decodeHexNibble(hex[offset])
 			if n == invalidByteValue {
-				return nil, &InvalidByteError{
-					Offset: i + j,
-					Msg:    "invalid byte in hex string",
-				}
+				return nil, InvalidByteError(offset)
 			}
 			nibbles[j] = n
 		}
