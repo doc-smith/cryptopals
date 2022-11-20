@@ -1,0 +1,1 @@
+![tests worflow](https://github.com/doc-smith/cryptopals/actions/workflows/test.yml/badge.svg)
