@@ -31,8 +31,7 @@ func readTestData(t *testing.T) []string {
 func TestSolve(t *testing.T) {
 	lines := readTestData(t)
 	want := "Now that the party is jumping\n"
-	got := Solve(lines)
-	if got != want {
+	if got := Solve(lines); got != want {
 		t.Errorf("got %q, want %q", got, want)
 	}
 }

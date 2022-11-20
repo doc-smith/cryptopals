@@ -7,8 +7,8 @@ import (
 
 func encrypt(plaintext, key []byte) []byte {
 	ciphertext := make([]byte, len(plaintext))
-	for i := 0; i < len(plaintext); i++ {
-		ciphertext[i] = plaintext[i] ^ key[i%len(key)]
+	for i, b := range plaintext {
+		ciphertext[i] = b ^ key[i%len(key)]
 	}
 	return ciphertext
 }
