@@ -54,8 +54,13 @@ func bhattacharyyaCoefficient(f, g map[byte]float64) float64 {
 	return sum
 }
 
-func ScoreEnglishText(text []byte) float64 {
+func ScoreEnglishTextByteFrequencies(freqs map[byte]float64) float64 {
 	return bhattacharyyaCoefficient(
 		englishLetterFrequencies,
+		freqs)
+}
+
+func ScoreEnglishText(text []byte) float64 {
+	return ScoreEnglishTextByteFrequencies(
 		countByteFrequency(text))
 }
