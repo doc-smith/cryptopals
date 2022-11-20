@@ -37,7 +37,7 @@ func Encode(b []byte) string {
 	sextetOffsets := [...]int{18, 12, 6, 0}
 
 	si := 0
-	for ; si < len(b); si += 3 {
+	for ; si+2 < len(b); si += 3 {
 		chunk := uint(b[si])<<16 | uint(b[si+1])<<8 | uint(b[si+2])
 		for _, shift := range sextetOffsets {
 			res = append(res, Alphabet[(chunk>>shift)&0b111111])

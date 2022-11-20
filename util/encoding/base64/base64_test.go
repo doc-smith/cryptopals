@@ -16,6 +16,8 @@ func TestEncode(t *testing.T) {
 	}{
 		{"empty", args{[]byte{}}, ""},
 		{"no-padding", args{[]byte{0x12, 0xaa, 0x7f}}, "Eqp/"},
+		{"single-byte", args{[]byte{0x12}}, "Eg=="},
+		{"padding", args{[]byte{0x12, 0xaa}}, "Eqo="},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
