@@ -23,14 +23,17 @@ func RandInt64(n int64) int64 {
 	return num.Int64()
 }
 
+// Generate a random uint64 by combining two random int64s
 func RandUint64(n uint64) uint64 {
 	if n <= math.MaxInt64 {
 		return uint64(RandInt64(int64(n)))
 	}
 
-	hMax := int64(n >> 63)
-	h := uint64(RandInt64(hMax))
-	return h<<63 | uint64(RandInt64(math.MaxInt64))
+	// Just one bit is missing from MaxUint64
+	h := RandInt64(2)
+	l := RandInt64(math.MaxInt64)
+
+	return (uint64(h) << 63) | uint64(l)
 }
 
 func RandInt(n int) int {
